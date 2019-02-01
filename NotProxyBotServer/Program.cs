@@ -28,7 +28,9 @@ namespace NotProxyBotServer
                         if (update.Message == null)
                             continue;
 
-                        Console.WriteLine($"{update.Message.From.ToString()}: {update.Message.Text ?? ""}");
+                        Console.WriteLine($"{update.Message.From.ToString()}: {update.Message.Chat.Id} {update.Message.Text ?? ""}");
+
+                        var msg = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, I cannot understand {update.Message.Text ?? ""}");
                     }
                 }
                 else

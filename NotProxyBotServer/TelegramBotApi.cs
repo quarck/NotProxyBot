@@ -56,39 +56,6 @@ namespace NotProxyBotServer
             return ret;
         }
 
-        private static string ConstructRequestUri(string methodBaseUri, List<Tuple<String, String>> arguments)
-        {
-            if (arguments.Count > 0)
-            {
-                var sb = new StringBuilder(methodBaseUri);
-
-                bool first = true;
-                foreach (var arg in arguments)
-                {
-                    if (first)
-                        sb.Append("?");
-                    else
-                        sb.Append("&");
-                    first = false;
-
-                    sb.Append(Uri.EscapeDataString(arg.Item1));
-
-                    if (arg.Item2 != null)
-                    {
-                        sb.Append("=");
-                        sb.Append(Uri.EscapeDataString(arg.Item2));
-                    }
-                }
-
-                return sb.ToString();
-            }
-            else
-            {
-                return methodBaseUri;
-            }
-        }
-
-
         public async Task<Telegram.User> GetMe()
         {
             return await DoGetMethodCall<Telegram.User>(BaseUriForGetMe);
@@ -122,9 +89,63 @@ namespace NotProxyBotServer
             return await DoGetMethodCall<List<Telegram.Update>>(ub.ToString());
         }
 
+        public async Task<Telegram.Message> SendMessage(
+            string chat_id, // required, can be integer 
+            string text, // required 
+            string parse_mode = null, 
+            bool? disable_web_page_preview = null, 
+            bool? disable_notification = null, 
+            long? reply_to_message_id = null, 
+            string reply_markup = null)
+        {
+            var ub = new UriBuilder(BaseUriForSendMessage);
+            ub.AddArgument("chat_id", chat_id);
+            ub.AddArgument("text", text);
+
+            if (parse_mode != null)
+            {
+                ub.AddArgument("parse_mode", parse_mode);
+            }
+            if (disable_web_page_preview != null)
+            {
+                ub.AddArgument("disable_web_page_preview", disable_web_page_preview.Value ? "true" : "false");
+            }
+            if (disable_notification != null)
+            {
+                ub.AddArgument("disable_notification", disable_notification.Value ? "true" : "false");
+            }
+            if (reply_to_message_id != null)
+            {
+                ub.AddArgument("reply_to_message_id", reply_to_message_id.Value);
+            }
+            if (reply_markup != null)
+            {
+                ub.AddArgument("reply_markup", reply_markup);
+            }
+
+            return await DoGetMethodCall<Telegram.Message>(ub.ToString());
+        }
+
+        public async Task<Telegram.Message> RespondToUpdate(
+            Telegram.Update update,
+            string text, // required 
+            string parse_mode = null,
+            bool? disable_web_page_preview = null,
+            bool? disable_notification = null,
+            bool quote_original_message = false,
+            string reply_markup = null)
+        {
+            return await SendMessage(
+                chat_id: update.Message.Chat.Id.ToString(), 
+                text: text, 
+                parse_mode: parse_mode, 
+                disable_web_page_preview: disable_web_page_preview, 
+                disable_notification: disable_notification, 
+                reply_to_message_id: quote_original_message ? (long?)update.Message.MessageId : null,
+                reply_markup: reply_markup);
+        }
+
         /*
-        public static readonly string BaseUriForGetMe = BaseUriForMethod("getMe");
-        public static readonly string BaseUriForSendMessage = BaseUriForMethod("sendMessage");
         public static readonly string BaseUriForSendContact = BaseUriForMethod("sendContact");
         public static readonly string BaseUriForGetFile = BaseUriForMethod("getFile");
 */
