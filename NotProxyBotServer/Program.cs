@@ -19,26 +19,52 @@ namespace NotProxyBotServer
 
             for (; ; )
             {
-                var updates = await api.GetUpdates(offset: nextOffset, timeout: 60, limit: 1);
-                if (updates != null && updates.Count > 0)
+                try
                 {
-                    foreach (var update in updates)
+                    var updates = await api.GetUpdates(offset: nextOffset, timeout: 60, limit: 1);
+                    if (updates != null && updates.Count > 0)
                     {
-                        nextOffset = update.UpdateId + 1;
-                        if (update.Message == null)
-                            continue;
+                        foreach (var update in updates)
+                        {
+                            nextOffset = update.UpdateId + 1;
+                            if (update.Message == null)
+                                continue;
 
-                        Console.WriteLine($"{update.Message.From.ToString()}: {update.Message.Chat.Id} {update.Message.Text ?? ""}");
+                            Console.WriteLine($"{update.Message.From.ToString()}: {update.Message.Chat.Id} {update.Message.Text ?? ""}");
 
-                        var msg = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, I cannot understand {update.Message.Text ?? ""}");
+                            long userId = update.Message.From.Id;
+                            string command = update.Message.Text ?? "";
+
+
+                            if (UserState<AuthValidFlag>.ExistsFor(userId))
+                            {
+                                var msg = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, I cannot understand {update.Message.Text ?? ""}");
+                            }
+                            else
+                            {
+                                if (command == ApiKeys.BOT_SECRET_AUTH_KEY)
+                                {
+                                    UserState<AuthValidFlag>.LoadOrDefault(userId).Save();
+                                    var msg = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, you are now welcome");
+                                }
+                                else
+                                {
+                                    var msg = await api.RespondToUpdate(update, $"{update.Message.From.ToString()}, you are not authorized to execute comands!");
+                                }
+                            }
+                        }
                     }
-                }
-                else
-                {
-                    Console.WriteLine("No Updates");
-                }
+                    else
+                    {
+                        Console.WriteLine("No Updates");
+                    }
 
-                await Task.Delay(100);
+                    await Task.Delay(100);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    await Task.Delay(10*1000);
+                }
             }
         }
 

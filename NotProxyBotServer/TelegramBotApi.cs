@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +34,7 @@ namespace NotProxyBotServer
         private async Task<TResult> DoGetMethodCall<TResult>(string uri)
             where TResult: class 
         {
-            Console.WriteLine($"Request: {uri}");
+            //Console.WriteLine($"Request: {uri}");
 
             TResult ret = null;
             try
@@ -44,7 +43,7 @@ namespace NotProxyBotServer
                 
                 if (!string.IsNullOrEmpty(resp))
                 {
-                    Console.WriteLine($"Raw result: {resp}");
+                    //Console.WriteLine($"Raw result: {resp}");
                     ret = Telegram.CallResult<TResult>.FromJsonString(resp)?.Result ?? null;
                 }
             }
@@ -145,12 +144,8 @@ namespace NotProxyBotServer
                 reply_markup: reply_markup);
         }
 
-        /*
-        public static readonly string BaseUriForSendContact = BaseUriForMethod("sendContact");
-        public static readonly string BaseUriForGetFile = BaseUriForMethod("getFile");
-*/
 
-        #region IDisposable Support
+       #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
