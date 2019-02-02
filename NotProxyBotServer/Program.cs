@@ -49,7 +49,7 @@ namespace NotProxyBotServer
                                 }
                                 else
                                 {
-                                    var msg = await api.RespondToUpdate(update, $"{update.Message.From.ToString()}, you are not authorized to execute comands!");
+                                    var msg = await api.RespondToUpdate(update, $"{update.Message.From.ToString()} ??");
                                 }
                             }
                         }
