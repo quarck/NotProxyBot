@@ -19,7 +19,7 @@ namespace NotProxyBotServer.Telegram
 
         public int NumWorkers { get; private set; }
 
-        public Queue<Telegram.Update> _queue;
+        public Queue<Update> _queue;
         public object _queueLock;
 
         public Task[] _taskArray;

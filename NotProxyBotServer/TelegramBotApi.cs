@@ -48,7 +48,7 @@ namespace NotProxyBotServer.Telegram
                 {
                     if (VerboseLogging)
                         Console.WriteLine($"Raw result: {resp}");
-                    ret = Telegram.CallResult<TResult>.FromJsonString(resp)?.Result ?? null;
+                    ret = CallResult<TResult>.FromJsonString(resp)?.Result ?? null;
                 }
                 else if (VerboseLogging)
                 {
@@ -64,12 +64,12 @@ namespace NotProxyBotServer.Telegram
             return ret;
         }
 
-        public async Task<Telegram.User> GetMe()
+        public async Task<User> GetMe()
         {
             return await DoGetMethodCall<Telegram.User>(BaseUriForGetMe);
         }
 
-        public async Task<List<Telegram.Update>> GetUpdates(
+        public async Task<List<Update>> GetUpdates(
             long? offset = null, 
             long? limit = null, 
             long? timeout = null, // in seconds
@@ -134,8 +134,8 @@ namespace NotProxyBotServer.Telegram
             return await DoGetMethodCall<Telegram.Message>(ub.ToString());
         }
 
-        public async Task<Telegram.Message> RespondToUpdate(
-            Telegram.Update update,
+        public async Task<Message> RespondToUpdate(
+            Update update,
             string text, // required 
             string parse_mode = null,
             bool? disable_web_page_preview = null,

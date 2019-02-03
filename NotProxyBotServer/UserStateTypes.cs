@@ -9,4 +9,24 @@ namespace NotProxyBotServer
     {
         public bool AuthValid = true;
     }
+
+    [Serializable]
+    public class RssEntry
+    {
+        public string Url;
+        public string[] Keywords;
+    }
+
+    [Serializable]
+    public class UserRssSubscriptions
+    { 
+        public List<RssEntry> RssEntries; 
+    }
+
+    [Serializable]
+    public class UserMuteState
+    {
+        public bool Muted;
+        public bool Stopped;
+    }
 }
