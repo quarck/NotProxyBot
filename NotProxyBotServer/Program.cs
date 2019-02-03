@@ -10,9 +10,11 @@ namespace NotProxyBotServer
     {
         static void Main()
         {
-            new TelegramBot(new TelegramBotApi(), 4).Start();
-            for (;;)
-                Thread.Sleep(100000);
+            var bot = new TelegramBot(new TelegramBotApi(), 4);
+            bot.Start();
+            bot.WaitAny();
+
+            Console.ReadLine();
         }
     }
 }

@@ -24,9 +24,9 @@ namespace NotProxyBotServer.Telegram
             string text = update.Message.Text ?? "";
 
 
-            if (UserState<AuthValidFlag>.ExistsFor(userId))
+            if (UserState<AuthValidFlag>.ExistsFor(userId) && UserState<AuthValidFlag>.Load(userId).Data.AuthValid)
             {
-                var r = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, I cannot understand {update.Message.Text ?? ""}");
+                var r = await api.RespondToUpdate(update, $"Hello {update.Message.From.ToString()}, I cannot understand {update.Message.Text ?? ""}, but we are friends so please be patient");
             }
             else
             {
@@ -37,7 +37,7 @@ namespace NotProxyBotServer.Telegram
                 }
                 else
                 {
-                    var r = await api.RespondToUpdate(update, $"{update.Message.From.ToString()} ??");
+                    var r = await api.RespondToUpdate(update, $"{update.Message.From.ToString()}, I cannot understand that");
                 }
             }
         }

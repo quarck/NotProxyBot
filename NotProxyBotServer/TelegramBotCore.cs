@@ -22,20 +22,46 @@ namespace NotProxyBotServer.Telegram
         public Queue<Telegram.Update> _queue;
         public object _queueLock;
 
+        public Task[] _taskArray;
+
         public TelegramBotCore(ITelegramBotApi api, int numWorkers)
         {
             _api = api;
             _queue = new Queue<Telegram.Update>();
             _queueLock = new object();
             NumWorkers = numWorkers;
+            _taskArray = new Task[NumWorkers + 1];
         }
 
         public void Start()
         {
-            Task.Factory.StartNew(() => RunReceiveLoop().Wait());
+            _taskArray[0] = Task.Factory.StartNew(
+                () => {
+                    try
+                    {
+                        RunReceiveLoop().Wait();
+                        Console.WriteLine("Recv loop done");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"recv loop done: {ex}");
+                    }
+                });
+
             for (int i = 0; i < NumWorkers; ++i)
             {
-                Task.Factory.StartNew(() => Worker());
+                _taskArray[i+1] = Task.Factory.StartNew(
+                    () => {
+                        try
+                        {
+                            Worker();
+                            Console.WriteLine("Worker done");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"worker died: {ex}");
+                        }
+                    });
             }
         }
 
@@ -116,7 +142,7 @@ namespace NotProxyBotServer.Telegram
                 {
                     if (_queue.Count == 0)
                     {
-                        Monitor.Wait(_queue);
+                        Monitor.Wait(_queueLock);
                     }
 
                     if (_queue.Count != 0)
@@ -133,5 +159,10 @@ namespace NotProxyBotServer.Telegram
         }
 
         internal abstract void HandleUserMessage(ITelegramBotApi api, Update msg);
+
+        public void WaitAny()
+        {
+            Task.WaitAny(_taskArray);
+        }
     }
 }

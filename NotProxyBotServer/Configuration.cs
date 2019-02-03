@@ -13,15 +13,13 @@ namespace NotProxyBotServer
             get
             {
                 var args = Environment.GetCommandLineArgs();
-                if (args.Length < 1)
+                if (args.Length < 2)
                 {
-                    Console.Error.WriteLine("give a server root at arg0");
+                    Console.Error.WriteLine("Error: Give a server root at arg1");
                     Environment.Exit(-1);
                 }
 
-                Console.WriteLine(args[0]);
-
-                return args[0];
+                return args[1];
             } 
         }
     }
