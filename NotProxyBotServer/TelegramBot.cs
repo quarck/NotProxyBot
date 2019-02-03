@@ -31,7 +31,7 @@ namespace NotProxyBotServer.Telegram
                 return;
             }
 
-            if (UserState<AuthValidFlag>.ExistsFor(userId) && UserState<AuthValidFlag>.Load(userId).Data.AuthValid)
+            if (UserState<AuthValidFlag>.ExistsFor(userId) && UserState<AuthValidFlag>.LoadOrDefault(userId).Data.AuthValid)
             {
                 await HandleAuthenticatedUserCommand(api, update, from, chat, userId, commandItems);
             }
@@ -150,7 +150,7 @@ namespace NotProxyBotServer.Telegram
 
         private void UnStop(long userId)
         {
-            var state = UserState<UserMuteState>.Load(userId);
+            var state = UserState<UserMuteState>.LoadOrDefault(userId);
             if (state.Data.Stopped)
             {
                 state.Data.Stopped = false;
@@ -175,7 +175,7 @@ namespace NotProxyBotServer.Telegram
                 return;
             }
 
-            var state = UserState<UserRssSubscriptions>.Load(userId);
+            var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
 
             state.Data.RssEntries.Add(
                 new RssEntry {
@@ -199,7 +199,7 @@ namespace NotProxyBotServer.Telegram
         {
             UnStop(userId);
 
-            var state = UserState<UserRssSubscriptions>.Load(userId);
+            var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
             var r = await api.RespondToUpdate(update, $"{from.FirstName}, here are your subscribtions:");
 
             for (int i = 0; i < state.Data.RssEntries.Count; ++ i)
@@ -228,7 +228,7 @@ namespace NotProxyBotServer.Telegram
                 return;
             }
 
-            var state = UserState<UserRssSubscriptions>.Load(userId);
+            var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
 
             if (state.Data.RssEntries.Count >= idx)
             {
@@ -251,7 +251,7 @@ namespace NotProxyBotServer.Telegram
             string[] parsedCommand
             )
         {
-            var state = UserState<UserMuteState>.Load(userId);
+            var state = UserState<UserMuteState>.LoadOrDefault(userId);
             state.Data.Stopped = true;
             state.Save();
 
@@ -275,7 +275,7 @@ namespace NotProxyBotServer.Telegram
                 return;
             }
 
-            var state = UserState<UserRssSubscriptions>.Load(userId);
+            var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
 
             if (state.Data.RssEntries.Count >= idx)
             {
@@ -298,7 +298,7 @@ namespace NotProxyBotServer.Telegram
             string[] parsedCommand
             )
         {
-            var state = UserState<UserMuteState>.Load(userId);
+            var state = UserState<UserMuteState>.LoadOrDefault(userId);
             state.Data.Muted = true;
             state.Save();
 
@@ -314,7 +314,7 @@ namespace NotProxyBotServer.Telegram
             string[] parsedCommand
             )
         {
-            var state = UserState<UserMuteState>.Load(userId);
+            var state = UserState<UserMuteState>.LoadOrDefault(userId);
             state.Data.Muted = false;
             state.Save();
 
