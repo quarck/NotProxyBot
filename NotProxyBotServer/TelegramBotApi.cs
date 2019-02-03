@@ -8,9 +8,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NotProxyBotServer
+namespace NotProxyBotServer.Telegram
 {
-    class TelegramBotApi: IDisposable
+    class TelegramBotApi: IDisposable, ITelegramBotApi
     {
         private HttpClient _httpClient = null;
 
@@ -23,6 +23,8 @@ namespace NotProxyBotServer
         public static readonly string BaseUriForSendContact = BaseUriForMethod("sendContact");
         public static readonly string BaseUriForGetFile = BaseUriForMethod("getFile");
 
+        public bool VerboseLogging { get; set; } = false;
+
         public TelegramBotApi()
         {
             _httpClient = new HttpClient();
@@ -34,7 +36,8 @@ namespace NotProxyBotServer
         private async Task<TResult> DoGetMethodCall<TResult>(string uri)
             where TResult: class 
         {
-            //Console.WriteLine($"Request: {uri}");
+            if (VerboseLogging)
+                Console.WriteLine($"Request: {uri}");
 
             TResult ret = null;
             try
@@ -43,9 +46,15 @@ namespace NotProxyBotServer
                 
                 if (!string.IsNullOrEmpty(resp))
                 {
-                    //Console.WriteLine($"Raw result: {resp}");
+                    if (VerboseLogging)
+                        Console.WriteLine($"Raw result: {resp}");
                     ret = Telegram.CallResult<TResult>.FromJsonString(resp)?.Result ?? null;
                 }
+                else if (VerboseLogging)
+                {
+                    Console.WriteLine("Empty result");
+                }
+
             }
             catch (HttpRequestException e)
             {
