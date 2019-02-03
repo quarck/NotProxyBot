@@ -176,6 +176,10 @@ namespace NotProxyBotServer.Telegram
             }
 
             var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
+            if (state.Data.RssEntries == null)
+            {
+                state.Data.RssEntries = new List<RssEntry>();
+            }
 
             state.Data.RssEntries.Add(
                 new RssEntry {
@@ -202,11 +206,14 @@ namespace NotProxyBotServer.Telegram
             var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
             var r = await api.RespondToUpdate(update, $"{from.FirstName}, here are your subscribtions:");
 
-            for (int i = 0; i < state.Data.RssEntries.Count; ++ i)
+            if (state.Data.RssEntries != null)
             {
-                var entry = state.Data.RssEntries[i];
-                var kws = string.Join(" ", entry.Keywords);
-                var rr = await api.RespondToUpdate(update, $"{i}: {entry.Url} {kws}");
+                for (int i = 0; i < state.Data.RssEntries.Count; ++i)
+                {
+                    var entry = state.Data.RssEntries[i];
+                    var kws = string.Join(" ", entry.Keywords);
+                    var rr = await api.RespondToUpdate(update, $"{i}: {entry.Url} {kws}");
+                }
             }
         }
 
@@ -222,7 +229,7 @@ namespace NotProxyBotServer.Telegram
         {
             UnStop(userId);
 
-            if (parsedCommand.Length < 2 || int.TryParse(parsedCommand[1], out var idx))
+            if (parsedCommand.Length < 2 || !int.TryParse(parsedCommand[1], out var idx))
             {
                 var rr = await api.RespondToUpdate(update, $"{from.FirstName}, please give arguments to the command");
                 return;
@@ -230,7 +237,7 @@ namespace NotProxyBotServer.Telegram
 
             var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
 
-            if (state.Data.RssEntries.Count >= idx)
+            if (state.Data.RssEntries == null || idx >= state.Data.RssEntries.Count || idx < 0)
             {
                 var rr = await api.RespondToUpdate(update, $"{from.FirstName}, index {idx} is not known");
                 return;
@@ -269,7 +276,7 @@ namespace NotProxyBotServer.Telegram
         {
             UnStop(userId);
 
-            if (parsedCommand.Length < 2 || int.TryParse(parsedCommand[1], out var idx))
+            if (parsedCommand.Length < 2 || !int.TryParse(parsedCommand[1], out var idx))
             {
                 var rr = await api.RespondToUpdate(update, $"{from.FirstName}, please give arguments to the command");
                 return;
@@ -277,7 +284,7 @@ namespace NotProxyBotServer.Telegram
 
             var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
 
-            if (state.Data.RssEntries.Count >= idx)
+            if (state.Data.RssEntries == null || idx >= state.Data.RssEntries.Count || idx < 0)
             {
                 var rr = await api.RespondToUpdate(update, $"{from.FirstName}, index {idx} is not known");
                 return;
