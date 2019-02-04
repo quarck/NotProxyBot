@@ -145,6 +145,9 @@ namespace NotProxyBotServer.Telegram
 
 /stop 
     - stop the bot completely, do any edit to un-stop it
+
+GDPR PRIVACY NOTICE: 
+There is no privacy. Consider anything you send to this bot as public.
 ");
         }
 

@@ -24,9 +24,9 @@ namespace NotProxyBotServer
         public string Guid { get; set; }
         public string EnclosureUrl { get; set; } // picture 
 
-        public string ToString()
+        public override string ToString()
         {
-            return Title + " " + Link; 
+            return Title + "\n" + Link + "\n" + Description + "\n" + EnclosureUrl + "\n" + PublicationDate + "\n"; 
         }
     }
 
@@ -40,9 +40,9 @@ namespace NotProxyBotServer
 
         public List<RssFeedItem> Items;
 
-        public string ToString()
+        public override string ToString()
         {
-            return string.Join(", ", Items.Select(x => x.ToString()));
+            return string.Join("\n\n", Items.Select(x => x.ToString()));
         }
     }
 }
