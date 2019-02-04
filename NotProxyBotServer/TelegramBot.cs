@@ -178,11 +178,12 @@ namespace NotProxyBotServer.Telegram
             var state = UserState<UserRssSubscriptions>.LoadOrDefault(userId);
             if (state.Data.RssEntries == null)
             {
-                state.Data.RssEntries = new List<RssEntry>();
+                state.Data.RssEntries = new List<RssUrlEntry>();
             }
 
             state.Data.RssEntries.Add(
-                new RssEntry {
+                new RssUrlEntry
+                {
                     Url = parsedCommand[1], 
                     Keywords = parsedCommand.Skip(2).ToArray()
                 });

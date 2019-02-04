@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace NotProxyBotServer.Telegram
 {
-    class TelegramBotApi: IDisposable, ITelegramBotApi
+    class TelegramBotApi: ITelegramBotApi
     {
         private HttpClient _httpClient = null;
 
@@ -25,9 +25,9 @@ namespace NotProxyBotServer.Telegram
 
         public bool VerboseLogging { get; set; } = false;
 
-        public TelegramBotApi()
+        public TelegramBotApi(HttpClient client)
         {
-            _httpClient = new HttpClient();
+            _httpClient = client;
             _httpClient.BaseAddress = new Uri("https://api.telegram.org/");
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -152,41 +152,5 @@ namespace NotProxyBotServer.Telegram
                 reply_to_message_id: quote_original_message ? (long?)update.Message.MessageId : null,
                 reply_markup: reply_markup);
         }
-
-
-       #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _httpClient.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~TelegramBotApi() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }

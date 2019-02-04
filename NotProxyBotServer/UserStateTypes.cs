@@ -11,7 +11,7 @@ namespace NotProxyBotServer
     }
 
     [Serializable]
-    public class RssEntry
+    public class RssUrlEntry
     {
         public string Url;
         public string[] Keywords;
@@ -20,7 +20,7 @@ namespace NotProxyBotServer
     [Serializable]
     public class UserRssSubscriptions
     { 
-        public List<RssEntry> RssEntries; 
+        public List<RssUrlEntry> RssEntries; 
     }
 
     [Serializable]
