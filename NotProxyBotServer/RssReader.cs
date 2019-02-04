@@ -77,13 +77,13 @@ namespace NotProxyBotServer
                 switch (child.Name.ToLower())
                 {
                     case "title":
-                        ret.Title = child.Value;
+                        ret.Title = child.InnerText;
                         break;
                     case "link":
-                        ret.Link = child.Value;
+                        ret.Link = child.InnerText;
                         break;
                     case "description":
-                        ret.Description = child.Value;
+                        ret.Description = child.InnerText;
                         break;
                     case "pubDate":
                         //ret.PublicationDate = DateTime.Parse()
@@ -119,11 +119,11 @@ namespace NotProxyBotServer
             if (title == null && description == null)
                 return null;
 
-            ret.Title = title?.Value ?? "";
-            ret.Description = description?.Value ?? "";
-            ret.Link = node["link"]?.Value ?? "";
+            ret.Title = title?.InnerText ?? "";
+            ret.Description = description?.InnerText ?? "";
+            ret.Link = node["link"]?.InnerText ?? "";
             //ret?.PublicationDate = ode["pubDate"]... parse...
-            ret.Guid = node["guid"]?.Value ?? "";
+            ret.Guid = node["guid"]?.InnerText ?? "";
             ret.EnclosureUrl = node["enclosure"]?.Attributes["url"]?.Value ?? "";
 
             return ret;        
